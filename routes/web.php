@@ -27,6 +27,7 @@ Route::middleware(['verify.shopify'])->group(function () {
 
     Route::get('/plans', [PlanController::class, 'index'])->name('plans.index');
 });
+
 Route::get('/storefront/settings', [ProgressBarSettingController::class, 'settings']);
 Route::post('/storefront/create-reward-variant', [RewardVariantController::class, 'createRewardVariant']);
 
