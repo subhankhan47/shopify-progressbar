@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Helpers\ShopifyHelper;
+use App\Jobs\SendWelcomeEmail;
 use App\Models\ProgressBarSetting;
 use App\Models\ProgressBarStyle;
 use App\Models\ProgressDrawerStyle;
@@ -9,6 +11,8 @@ use App\Models\ProgressWidgetStyle;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 use function Illuminate\Foundation\Testing\Concerns\json;
 
 class ProgressBarSettingController extends Controller
@@ -19,6 +23,16 @@ class ProgressBarSettingController extends Controller
             return \Redirect::tokenRedirect('plans.index');
         }
         $user = Auth::user();
+        try {
+            $shopDetails = ShopifyHelper::getShopifyStoreNameEmail();
+            if ((isset($user->plan_id) || $user->isGrandfathered() || $user->isFreemium()) && !$user->email_sent) {
+                $shopDetails['plan'] = DB::table('plans')->where('id', $user->plan_id)->first();
+                SendWelcomeEmail::dispatch($shopDetails);
+                $user->update(['email_sent' => true]);
+            }
+        } catch (\Exception $e) {
+            Log::error('Failed to send welcome email: ' . $e->getMessage());
+        }
         $user->load(['progressBarStyle', 'progressWidgetStyle', 'progressDrawerStyle', 'progressBarSetting',]);
         $progressBarStyle = $user->progressBarStyle ?? new ProgressBarStyle(['user_id' => $user->id]);
         $progressWidgetStyle = $user->progressWidgetStyle ?? new ProgressWidgetStyle(['user_id' => $user->id]);
