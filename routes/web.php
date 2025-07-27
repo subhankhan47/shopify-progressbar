@@ -7,7 +7,6 @@ use App\Http\Controllers\RewardVariantController;
 use App\Http\Controllers\ThresholdController;
 use Illuminate\Support\Facades\Route;
 
-
 Route::middleware(['verify.shopify'])->group(function () {
     Route::get('/', [ProgressBarSettingController::class, 'index'])->name('home');
 
