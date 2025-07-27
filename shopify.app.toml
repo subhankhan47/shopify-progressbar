@@ -1,0 +1,19 @@
+# Learn more about configuring your app at https://shopify.dev/docs/apps/tools/cli/configuration
+
+client_id = "3d6bb85a8c84ad7ebcab3a9c7df3dd6f"
+application_url = "https://progress-bar.test/"
+embedded = true
+name = "Progress Bar"
+handle = "sf-progress-bar"
+
+[build]
+include_config_on_deploy = true
+
+[webhooks]
+api_version = "2025-01"
+
+[auth]
+redirect_urls = [ "https://progress-bar.test/authenticate" ]
+
+[pos]
+embedded = false

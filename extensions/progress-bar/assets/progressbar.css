@@ -1,0 +1,224 @@
+/* progressbar.css */
+
+/* ========== INLINE PROGRESS BAR ========== */
+
+#progressbar-top {
+    background-color: var(--pb-bg-color, #eee);
+    color: var(--pb-font-color, #000);
+    font-size: var(--pb-font-size, 14px);
+    border-radius: var(--pb-border-radius, 6px);
+    padding: 8px 16px;
+    text-align: center;
+    animation: var(--pb-animation, none);
+    position: relative;
+}
+
+#progressbar-top .progress-bar-wrapper,
+.horizontal-drawer .progress-bar-wrapper,
+.vertical-drawer .progress-bar-wrapper{
+    width: 100%;
+    background-color: #e0e0e0;
+    height: 10px;
+    border-radius: var(--pb-border-radius, 6px);
+    overflow: hidden;
+    margin-top: 5px;
+}
+
+#progressbar-top .progress-bar-fill,
+.horizontal-drawer .progress-bar-fill,
+.vertical-drawer .progress-bar-fill{
+    width: 0%;
+    height: 100%;
+    background-color: var(--pb-filled-progress-color, #00c853);
+    transition: width 0.3s ease-in-out;
+    display: block;
+}
+
+/* ---------------- PRODUCTS CAROUSEL ---------------- */
+.progressbar-carousel-wrapper {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    margin: 8px 0;
+}
+
+.progressbar-products-container {
+    flex: 1;
+    overflow: hidden;
+}
+
+.progressbar-products {
+    display: flex;
+    gap: 12px;
+    overflow-x: auto;
+    scroll-behavior: smooth;
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+}
+.progressbar-products::-webkit-scrollbar {
+    display: none; /* Chrome/Safari */
+}
+
+.progressbar-products .pb-product {
+    flex: 0 0 auto;
+    min-width: 120px;
+    background: #fff;
+    border-radius: 8px;
+    text-align: center;
+    box-shadow: 0 0 6px rgba(0,0,0,0.08);
+    padding: 4px 6px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.pb-product-image {
+    width: 30px;
+    height: 30px;
+    object-fit: cover;
+    border-radius: 6px;
+}
+
+.pb-product-title {
+    font-weight: 600;
+    font-size: 10px;
+    margin: 2px 0;
+    word-break: break-word;
+}
+
+.pb-product-meta {
+    font-size: 8px;
+    color: #666;
+    display: flex;
+    justify-content: space-around;
+    width: 100%;
+}
+.carousel-arrow {
+    width: 28px;
+    height: 28px;
+    background: rgba(255, 255, 255, 0.85);
+    color: #333;
+    border: none;
+    border-radius: 50%;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+    font-size: 18px;
+    user-select: none;
+    flex-shrink: 0;
+}
+
+.carousel-arrow:hover:not(:disabled) {
+    background: #f0f0f0;
+    transform: scale(1.05);
+}
+
+.carousel-arrow:disabled {
+    opacity: 0.4;
+    cursor: default;
+    pointer-events: none;
+}
+.carousel-arrow.left {
+    left: 6px;
+}
+
+.carousel-arrow.right {
+    right: 6px;
+}
+
+@media (max-width: 500px) {
+    .pb-product-image {
+        width: 40px;
+        height: 40px;
+    }
+    .pb-product-title {
+        font-size: 12px;
+    }
+    .pb-product-meta {
+        font-size: 10px;
+    }
+}
+/* ========== WIDGET ========== */
+#progressbar-widget {
+    position: fixed;
+    z-index: 9999;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-size: 12px;
+    cursor: pointer;
+    animation: var(--pb-animation, none);
+}
+#progressbar-drawer {
+    position: fixed;
+    padding: 5px;
+    background-color: var(--drawer-bg-color, #fff);
+    color: var(--drawer-font-color, #000);
+    font-size: var(--drawer-font-size, 14px);
+    transition: transform 0.4s ease;
+    box-shadow: 0 -2px 10px rgba(0,0,0,0.1);
+    z-index: 9999;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.horizontal-drawer {
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    max-height: auto;
+    transform: translateY(100%);
+    border-top-left-radius: 12px;
+    border-top-right-radius: 12px;
+    overflow-y: hidden;
+    overflow-x: auto;
+}
+
+.vertical-drawer {
+    bottom: 0;
+    right: 0;
+    width: 100%;
+    max-width: 400px;
+    height: 35vh;
+    transform: translateY(100%);
+    border-top-left-radius: 12px;
+    border-top-right-radius: 12px;
+}
+
+/* ========== TEXT + BUTTONS ========== */
+.drawer-message {
+    text-align: center;
+    font-weight: bold;
+}
+
+.drawer-close-btn {
+    background: rgba(255, 255, 255, 0.85);
+    color: #333;
+    border: none;
+    padding: 6px 12px;
+    border-radius: 6px;
+    cursor: pointer;
+    margin-top: auto;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+}
+
+/* ========== ANIMATION EXAMPLES ========== */
+@keyframes bounce {
+    from { transform: translateY(-20px); opacity: 0; }
+    to { transform: translateY(0); opacity: 1; }
+}
+@keyframes fade {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+@keyframes slide {
+    from { transform: translateX(100%); }
+    to { transform: translateX(0); }
+}

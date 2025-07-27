@@ -1,0 +1,14 @@
+<link rel="stylesheet" href="{{ 'progressbar.css' | asset_url }}" />
+<script src="{{ 'jquery-3.7.1.min.js' | asset_url }}"></script>
+<script src="{{ 'progressbar.js' | asset_url }}" defer></script>
+
+{% schema %}
+{
+  "name": "progressbar",
+  "target": "head",
+  "settings": [],
+  "enabled_on": {
+     "templates": ["*"]
+  }
+}
+{% endschema %}
