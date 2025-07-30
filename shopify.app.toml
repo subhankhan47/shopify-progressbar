@@ -1,19 +1,23 @@
 # Learn more about configuring your app at https://shopify.dev/docs/apps/tools/cli/configuration
 
-client_id = "3d6bb85a8c84ad7ebcab3a9c7df3dd6f"
-application_url = "https://progress-bar.test/"
+client_id = "5c5d953c028bb456249df23f06a1c31c"
+name = "SF Reward Bar "
+handle = "sf-reward-bar"
+application_url = "https://sf-rewardbar.sfaddons.com/"
 embedded = true
-name = "Progress Bar"
-handle = "sf-progress-bar"
 
 [build]
 include_config_on_deploy = true
 
 [webhooks]
-api_version = "2025-01"
+api_version = "2025-07"
+
+  [[webhooks.subscriptions]]
+  uri = "/webhook/shop-redact"
+  compliance_topics = [ "shop/redact" ]
 
 [auth]
-redirect_urls = [ "https://progress-bar.test/authenticate" ]
+redirect_urls = [ "https://sf-rewardbar.sfaddons.com/authenticate" ]
 
 [pos]
 embedded = false
