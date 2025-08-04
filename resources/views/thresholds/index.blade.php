@@ -29,7 +29,7 @@
                                     <th>Product Variant</th>
                                     <th>Priority</th>
                                     <th>Auto Add</th>
-                                    <th>Shipping Regions</th>
+{{--                                    <th>Shipping Regions</th>--}}
                                     <th>Actions</th>
                                 </tr>
                                 </thead>
@@ -54,13 +54,13 @@
                                                 <div class="badge bg-secondary">No</div>
                                             @endif
                                         </td>
-                                        <td>
-                                            @if (!empty($threshold->shipping_regions))
-                                                {{ implode(', ', $threshold->shipping_regions) }}
-                                            @else
-                                                <span class="text-muted">-</span>
-                                            @endif
-                                        </td>
+{{--                                        <td>--}}
+{{--                                            @if (!empty($threshold->shipping_regions))--}}
+{{--                                                {{ implode(', ', $threshold->shipping_regions) }}--}}
+{{--                                            @else--}}
+{{--                                                <span class="text-muted">-</span>--}}
+{{--                                            @endif--}}
+{{--                                        </td>--}}
                                         <td>
                                             <a onclick="navigation('/thresholds/{{ $threshold->id }}/edit')" class="btn btn-sm btn-warning">Edit</a>
                                             <button type="button" class="btn btn-sm btn-danger delete-threshold" data-id="{{ $threshold->id }}">

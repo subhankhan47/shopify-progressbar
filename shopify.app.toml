@@ -7,7 +7,7 @@ application_url = "https://sf-rewardbar.sfaddons.com/"
 embedded = true
 
 [build]
-include_config_on_deploy = true
+include_config_on_deploy = false
 
 [webhooks]
 api_version = "2025-07"
