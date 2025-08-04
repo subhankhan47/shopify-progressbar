@@ -11,7 +11,10 @@
                             <span>Here you can manage created thresholds</span>
                         </div>
                         <div class="d-flex gap-2">
-                            <a onclick="navigation('/thresholds/create')" class="black-btn">Add Threshold</a>
+                            @if($thresholds->count() < 1)
+                                <a onclick="navigation('/thresholds/create')" class="black-btn">Add Threshold</a>
+                            @endif
+{{--                            <a onclick="navigation('/thresholds/create')" class="black-btn">Add Threshold</a>--}}
                         </div>
                     </div>
                     <div class="card-body">
