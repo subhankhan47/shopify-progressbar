@@ -31,7 +31,7 @@
                                            <span>Drawer Icon</span>
                                            <span>Drawer Progressbar (Vertical Or Horizontal)</span>
                                            <span>Free Product Gift</span>
-                                           <span>Free Shipping</span>
+{{--                                           <span>Free Shipping</span>--}}
                                         </div>
                                     </div>
                                     <div class="plan-btn-wrapper">
@@ -59,7 +59,7 @@
                                             <span>Drawer Icon</span>
                                             <span>Drawer Progressbar (Vertical Or Horizontal)</span>
                                             <span>Free Product Gift</span>
-                                            <span>Free Shipping</span>
+{{--                                            <span>Free Shipping</span>--}}
                                         </div>
                                     </div>
                                     <div class="plan-btn-wrapper">
