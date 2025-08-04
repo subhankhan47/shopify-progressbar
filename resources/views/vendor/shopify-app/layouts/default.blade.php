@@ -29,6 +29,7 @@
         <div class="app-content">
             <main role="main">
                 @yield('content')
+                @include('partials.videoGuide')
             </main>
         </div>
     </div>
