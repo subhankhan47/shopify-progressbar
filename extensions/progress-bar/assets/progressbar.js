@@ -1,5 +1,5 @@
 const shop = Shopify.shop;
-const baseURL = 'https://progress-bar.test/';
+const baseURL = 'https://sf-rewardbar.sfaddons.com/';
 const lineItemSelectors = 'tr, .cart__row, .cart-item, .cart-item-row, .line-item';
 const quantityButtonSelectors = 'quantity-input, input.quantity, input[name^="updates"], .quantity__input, .js-qty__input';
 const radioSelectors = 'label,input[type="radio"]';

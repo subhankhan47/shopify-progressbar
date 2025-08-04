@@ -1,6 +1,6 @@
 @php
     $isEdit = isset($threshold);
-    $rewardType = old('reward_type', $threshold->reward_type ?? '');
+    $rewardType = old('reward_type', $threshold->reward_type ?? 'free_product');
 @endphp
 
 <div class="mb-3">
@@ -13,7 +13,7 @@
     <label for="reward_type" class="form-label">Reward Type</label>
     <select name="reward_type" id="reward_type" class="form-select" required>
         <option value="">-- Select Reward Type --</option>
-        <option value="free_shipping" {{ $rewardType === 'free_shipping' ? 'selected' : '' }}>Free Shipping</option>
+{{--        <option value="free_shipping" {{ $rewardType === 'free_shipping' ? 'selected' : '' }}>Free Shipping</option>--}}
         <option value="free_product" {{ $rewardType === 'free_product' ? 'selected' : '' }}>Free Product</option>
     </select>
 </div>
