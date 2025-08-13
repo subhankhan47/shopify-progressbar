@@ -11,6 +11,9 @@
                             <span>Here you can manage created thresholds</span>
                         </div>
                         <div class="d-flex gap-2">
+                            <a target="_blank" class="button white-btn d-none" id="activate-storefront-btn">
+                                Activate on Store
+                            </a>
                             @if($thresholds->count() < 1)
                                 <a onclick="navigation('/thresholds/create')" class="black-btn">Add Threshold</a>
                             @endif

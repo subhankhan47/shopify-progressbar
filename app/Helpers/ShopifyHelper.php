@@ -30,10 +30,18 @@ class ShopifyHelper
         $storeName = $response['body']['data']['shop']['name'] ?? null;
         $themeId = null;
         foreach ($response['body']['data']['themes']['edges'] as $theme) {
-            if (strtolower($theme['node']['role']) === 'main') {
+            $role = strtolower($theme['node']['role']);
+            if ($role === 'main') {
                 $themeId = str_replace('gid://shopify/OnlineStoreTheme/', '', $theme['node']['id']);
                 break;
             }
+        }
+        if (!$themeId && count($response['body']['data']['themes']['edges'])) {
+            $themeId = str_replace(
+                'gid://shopify/OnlineStoreTheme/',
+                '',
+                $response['body']['data']['themes']['edges'][0]['node']['id']
+            );
         }
         return [
             'storeName' => $storeName,

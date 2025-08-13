@@ -20,6 +20,7 @@
     </script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/css/select2.min.css" rel="stylesheet" />
     <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/js/select2.min.js"></script>
+    <script src="{{ asset('js/theme-details.js') }}"></script>
     <title>{{ config('shopify-app.app_name') }}</title>
     @yield('styles')
 </head>
@@ -58,7 +59,11 @@
             label: 'Plans',
             destination: '/plans',
         });
-        linksArray.push(thresholdLink,plansLink);
+        const videoGuideLink = AppLink.create(app, {
+            label: 'Guide',
+            destination: '/videoGuide',
+        });
+        linksArray.push(thresholdLink,plansLink,videoGuideLink);
 
         const navigationMenu = NavigationMenu.create(app, {
             items: linksArray,

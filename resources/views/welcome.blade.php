@@ -4,7 +4,12 @@
     <div class="container my-5">
         <div class="card shadow rounded">
             <div class="card-header bg-secondary text-white">
-                <h4 class="mb-0">Progress Bar Configuration</h4>
+                <div class="d-flex justify-content-space-between">
+                    <h4 class="mb-0">Progress Bar Configuration</h4>
+                    <a target="_blank" class="button white-btn d-none" id="activate-storefront-btn">
+                        Activate on Store
+                    </a>
+                </div>
             </div>
             <div class="card-body">
                 <ul class="nav nav-tabs custom-tabs" id="settingsTab" role="tablist">

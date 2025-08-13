@@ -26,6 +26,9 @@ Route::middleware(['verify.shopify'])->group(function () {
     Route::get('/search-products', [ThresholdController::class, 'searchProducts'])->name('rules.searchProducts');
 
     Route::get('/plans', [PlanController::class, 'index'])->name('plans.index');
+    Route::get('/videoGuide', function () {return view('video-guide');});
+    Route::get('/theme-details', [ProgressBarSettingController::class, 'getThemeDetails'])->name('get.themeDetails');
+
 });
 
 Route::get('/storefront/settings', [ProgressBarSettingController::class, 'settings']);

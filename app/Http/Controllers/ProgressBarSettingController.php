@@ -79,4 +79,11 @@ class ProgressBarSettingController extends Controller
             'thresholds' => $user->thresholds()->orderBy('priority')->get(),
         ]);
     }
+
+    public function getThemeDetails()
+    {
+        $shopifyData = ShopifyHelper::getShopifyStoreDetails();
+        $shopifyData['storeName'] = explode('.myshopify', auth()->user()->name)[0];
+        return response()->json(['shopifyData' => $shopifyData]);
+    }
 }
