@@ -17,7 +17,6 @@
                             @if($thresholds->count() < 1)
                                 <a onclick="navigation('/thresholds/create')" class="black-btn">Add Threshold</a>
                             @endif
-{{--                            <a onclick="navigation('/thresholds/create')" class="black-btn">Add Threshold</a>--}}
                         </div>
                     </div>
                     <div class="card-body">

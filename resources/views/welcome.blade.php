@@ -4,7 +4,7 @@
     <div class="container my-5">
         <div class="card shadow rounded">
             <div class="card-header bg-secondary text-white">
-                <div class="d-flex justify-content-space-between">
+                <div class="d-flex justify-content-between">
                     <h4 class="mb-0">Progress Bar Configuration</h4>
                     <a target="_blank" class="button white-btn d-none" id="activate-storefront-btn">
                         Activate on Store
