@@ -21,8 +21,8 @@
                         <h4 class="mb-3">Need Help? Contact Support</h4>
                         <p>
                             📞 <strong>WhatsApp Support:</strong>
-                            <a href="https://wa.me/923185423031" target="_blank" class="text-primary">
-                                +923185423031
+                            <a href="https://wa.me/447366278042" target="_blank" class="text-primary">
+                                +447366278042
                             </a>
                         </p>
                         <p>

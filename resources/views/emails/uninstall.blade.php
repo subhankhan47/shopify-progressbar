@@ -22,7 +22,7 @@
                                 If there’s anything we could’ve done better or if you’d like to share feedback, please let us know by replying to this email.
                             </p>
                             <p style="margin-bottom: 10px;">
-                                📞 <strong>WhatsApp Support:</strong> <a href="https://wa.me/923185423031" target="_blank" style="color: #007bff;">+923185423031</a>
+                                📞 <strong>WhatsApp Support:</strong> <a href="https://wa.me/447366278042" target="_blank" style="color: #007bff;">+447366278042</a>
                             </p>
                             <p style="margin-bottom: 30px;">
                                 📧 <strong>Email Support:</strong> <a href="mailto:support@sfaddons.com" style="color: #007bff;">support@sfaddons.com</a>
