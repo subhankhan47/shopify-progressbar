@@ -1,8 +1,76 @@
 const shop = Shopify.shop;
 const baseURL = 'https://sf-rewardbar.sfaddons.com/';
-const lineItemSelectors = 'tr, .cart__row, .cart-item, .cart-item-row, .line-item';
-const quantityButtonSelectors = 'quantity-input, input.quantity, input[name^="updates"], .quantity__input, .js-qty__input';
-const radioSelectors = 'label,input[type="radio"]';
+// ── Compatibility Helper ───────────────────────────────────────────────
+const rewardBarShopCompatibilityHelper = {
+    getSettings(shopDomain, themeId = null) {
+        const defaults = {
+            currencySymbol: '$',
+            moneyFormatType: 'amount',
+            displayDecimals: true,
+            lineItemSelectors: 'tr, .cart__row, .cart-item, .cart-item-row, .line-item',
+            quantityButtonSelectors: 'quantity-input, input.quantity, input[name^="updates"], .quantity__input, .js-qty__input',
+            radioSelectors: 'label,input[type="radio"]',
+            messages: {
+                spendMore: 'Spend more to unlock',
+                toUnlock: 'to unlock',
+                unlocked: 'Reward unlocked',
+                freeShipping: 'Free Shipping',
+                freeProduct: 'Free Gift',
+                qtyLabel: 'Qty',
+            },
+        };
+
+        const storeOverrides = {
+            'a239bf-37.myshopify.com': {
+                currencySymbol: 'R$',
+                moneyFormatType: 'amount_with_comma_separator',
+                messages: {
+                    spendMore: 'Gaste mais para desbloquear',
+                    toUnlock: 'de desconto!',
+                    unlocked: 'Recompensa desbloqueada',
+                    freeShipping: 'Frete grátis',
+                    freeProduct: 'Presente Especial',
+                    qtyLabel: 'Qnt',
+                },
+                lineItemSelectors: '.cart__form-item',
+                quantityButtonSelectors: '.quantity-input',
+                radioSelectors: 'select[name="options[Title]"], label[for^="options[Title]"], label, input[type="radio"]',
+            },
+        };
+
+        const themeOverrides = {};
+
+        const storeConfig = storeOverrides[shopDomain] || {};
+        const themeConfig = (themeId && themeOverrides[themeId]) ? themeOverrides[themeId] : {};
+
+        return {
+            currencySymbol: storeConfig.currencySymbol || themeConfig.currencySymbol || defaults.currencySymbol,
+            moneyFormatType: storeConfig.moneyFormatType || themeConfig.moneyFormatType || defaults.moneyFormatType,
+            displayDecimals: storeConfig.displayDecimals ?? themeConfig.displayDecimals ?? defaults.displayDecimals,
+            lineItemSelectors: storeConfig.lineItemSelectors || themeConfig.lineItemSelectors || defaults.lineItemSelectors,
+            quantityButtonSelectors: storeConfig.quantityButtonSelectors || themeConfig.quantityButtonSelectors || defaults.quantityButtonSelectors,
+            radioSelectors: storeConfig.radioSelectors || themeConfig.radioSelectors || defaults.radioSelectors,
+            messages: { ...defaults.messages, ...storeConfig.messages, ...themeConfig.messages },
+        };
+    },
+
+    formatPrice(value, moneyFormatType = 'amount', currencySymbol = '$') {
+        const formatters = {
+            amount: () => `${currencySymbol}${value.toFixed(2)}`,
+            amount_no_decimals: () => `${currencySymbol}${Math.round(value)}`,
+            amount_with_comma_separator: () => `${currencySymbol}${value.toFixed(2).replace('.', ',')}`,
+            amount_no_decimals_with_comma_separator: () =>
+                `${currencySymbol}${Math.round(value).toString().replace(/\B(?=(\d{3})+(?!\d))/g, '.')}`,
+        };
+        return (formatters[moneyFormatType] || formatters['amount'])();
+    },
+
+    t(key, settings = {}) {
+        const messages = settings.messages || {};
+        return messages[key] || key;
+    },
+};
+
 (function ($) {
     $(document).ready(function () {
         removeFreeRadioVariant();
@@ -31,6 +99,7 @@ const radioSelectors = 'label,input[type="radio"]';
     async function renderProgressBar(settings, cart) {
         const setting = settings.settings || {};
         const cartTotal = cart?.items_subtotal_price ? cart.items_subtotal_price / 100 : 0;
+        const shopCompat = rewardBarShopCompatibilityHelper.getSettings(shop, Shopify.theme?.id);
 
         // Page condition check
         const isHome = location.pathname === '/';
@@ -48,7 +117,7 @@ const radioSelectors = 'label,input[type="radio"]';
         if (!threshold) return;
 
         const progress = calculateProgress(cartTotal, threshold.amount);
-        const message = buildRewardMessage(threshold, cartTotal, setting);
+        const message = buildRewardMessage(threshold, cartTotal, setting, shopCompat);
         let rewardVariantId = localStorage.getItem('rewardVariantId');
         const thresholdMet = cartTotal >= threshold.amount;
 
@@ -110,7 +179,9 @@ const radioSelectors = 'label,input[type="radio"]';
                 "Accept": "application/json",
                 "X-Shopify-Shop-Domain": shop,
             },
-        }).then(res => res).catch(() => null);
+        })
+            .then(res => res)
+            .fail(() => null);
     }
 
     function fetchCart() {
@@ -118,16 +189,12 @@ const radioSelectors = 'label,input[type="radio"]';
             url: '/cart.js',
             method: 'GET',
             dataType: 'json'
-        }).then(res => {
-            return {
-                ...res,
-                items: Array.isArray(res.items) ? res.items : [],
-            };
-        }).catch(() => {
-            return {
-                items: [],
-            };
-        });
+        }).then(res => ({
+            ...res,
+            items: Array.isArray(res.items) ? res.items : [],
+        })).fail(() => ({
+            items: [],
+        }));
     }
 
     function resolveThreshold(cartTotal, thresholds = []) {
@@ -147,19 +214,28 @@ const radioSelectors = 'label,input[type="radio"]';
         return bestThreshold || sorted[0];
     }
 
-    function buildRewardMessage(threshold, cartTotal, setting) {
+    function buildRewardMessage(threshold, cartTotal, setting,shopCompat) {
         const remaining = threshold.amount - cartTotal;
+        const currency = shopCompat.currencySymbol;
+        const formattedRemaining = rewardBarShopCompatibilityHelper.formatPrice(
+            remaining,
+            shopCompat.moneyFormatType,
+            currency
+        );
         if (remaining > 0) {
-            const base = setting.custom_message || 'Spend more to unlock';
-            return `${base}: $${remaining.toFixed(2)} to unlock ${formatReward(threshold)}`;
+            const base = setting.custom_message || rewardBarShopCompatibilityHelper.t('spendMore', shopCompat);
+            if(shop === "a239bf-37.myshopify.com"){
+                return `${base}`;
+            }
+            return `${base}: ${formattedRemaining} ${rewardBarShopCompatibilityHelper.t('toUnlock', shopCompat)} ${formatReward(threshold, shopCompat)}`;
         }
-        const unlocked = setting.completion_message || 'Reward unlocked';
-        return `${unlocked}: ${formatReward(threshold)}`;
+        const unlocked = setting.completion_message || rewardBarShopCompatibilityHelper.t('unlocked', shopCompat);
+        return `${unlocked}: ${formatReward(threshold, shopCompat)}`;
     }
 
-    function formatReward(threshold) {
-        if (threshold.reward_type === 'free_shipping') return 'Free Shipping';
-        if (threshold.reward_type === 'free_product') return 'Free Gift';
+    function formatReward(threshold, shopCompat) {
+        if (threshold.reward_type === 'free_shipping') return rewardBarShopCompatibilityHelper.t('freeShipping', shopCompat);
+        if (threshold.reward_type === 'free_product') return rewardBarShopCompatibilityHelper.t('freeProduct', shopCompat);
         return 'Reward';
     }
 
@@ -169,6 +245,9 @@ const radioSelectors = 'label,input[type="radio"]';
 
     function injectInlineProgressBar(progress, message, style, setting, cartItems = []) {
         $('#progressbar-top').remove();
+        const shopSettings = rewardBarShopCompatibilityHelper.getSettings(shop, Shopify.theme?.id);
+        const currencySymbol = shopSettings.currencySymbol || '$';
+        const qtyLabel = shopSettings.messages.qtyLabel || 'Qty';
         style = style || {};
         setting = setting || {};
         const {
@@ -204,16 +283,19 @@ const radioSelectors = 'label,input[type="radio"]';
                 <div class="progressbar-products-container">
                   <div class="progressbar-products">
                     ${cartItems.map(item => {
-                const totalPrice = ((item.price * item.quantity) / 100).toFixed(2);
+                const totalPrice = item.price ? ((item.price * item.quantity) / 100) : 0;
+                const displayPrice = rewardBarShopCompatibilityHelper.formatPrice(totalPrice, shopSettings.moneyFormatType, currencySymbol);
                 const displayImage = item.image && item.image.startsWith('http') ? item.image : 'https://t4.ftcdn.net/jpg/04/23/98/19/240_F_423981991_w1ZYf0ah4WWKe1R8BOxd3OgGDRPKEzp1.jpg';
-                const pTitle = item.title? item.title : 'Free Gift';
+                const rawTitle = item.title || 'Free Gift';
+                const pTitle = rawTitle.replace(/\s*-\s*(default\s*title\s*)?-?\s*free\s*/gi, '').trim();
+
                 return `
                         <div class="pb-product">
                           <img src="${displayImage}" alt="${pTitle}" class="pb-product-image" />
                           <div class="pb-product-title">${pTitle}</div>
                           <div class="pb-product-meta">
-                            <span>Qty: ${item.quantity}</span>
-                            <span>$${totalPrice}</span>
+                            <span>${qtyLabel}: ${item.quantity}</span>
+                            <span>${displayPrice}</span>
                           </div>
                         </div>
                       `;
@@ -400,7 +482,9 @@ const radioSelectors = 'label,input[type="radio"]';
                         ${cartItems.map(item => {
                 const totalPrice =  ((item.price * item.quantity) / 100).toFixed(2);
                 const displayImage = item.image && item.image.startsWith('http') ? item.image : 'https://t4.ftcdn.net/jpg/04/23/98/19/240_F_423981991_w1ZYf0ah4WWKe1R8BOxd3OgGDRPKEzp1.jpg';
-                const pTitle = item.title? item.title : 'Free Gift';
+                const rawTitle = item.title || 'Free Gift';
+                const pTitle = rawTitle.replace(/\s*-\s*(default\s*title\s*)?-?\s*free\s*/gi, '').trim();
+
                 return `
                                 <div class="pb-product">
                                     <img src="${displayImage}" alt="${pTitle}" class="pb-product-image" />
@@ -471,13 +555,16 @@ const radioSelectors = 'label,input[type="radio"]';
                 id: variantId,
                 quantity: 1
             }
-        }).then(res => {
-            console.log('Free product added:', res);
-            return res;
-        }).catch(err => {
-            console.error('Error auto-adding product:', err);
-        });
+        })
+            .then(res => {
+                console.log('Free product added:', res);
+                return res;
+            })
+            .fail(err => {
+                console.error('Error auto-adding product:', err);
+            });
     }
+
     function removeProductFromCart(variantId) {
         return fetchCart().then(cart => {
             const item = cart.items.find(i => i.variant_id == variantId);
@@ -493,7 +580,6 @@ const radioSelectors = 'label,input[type="radio"]';
             });
         });
     }
-
     function createRewardVariantIfNeeded(sourceVariantId) {
         return $.ajax({
             url: `${baseURL}storefront/create-reward-variant`,
@@ -507,21 +593,21 @@ const radioSelectors = 'label,input[type="radio"]';
                 source_variant_id: sourceVariantId
             }),
             dataType: 'json'
-        }).then(res => {
-            if (res && res.product_handle) {
-                localStorage.setItem('rewardVariantProductHandle', res.product_handle);
-            }
-            if (res && res.variant_id) {
-                return res.variant_id;
-            }
-            return null;
-        }).catch(err => {
-            console.error('Failed to create/retrieve reward variant:', err);
-            return null;
-        });
+        })
+            .then(res => {
+                if (res && res.product_handle) {
+                    localStorage.setItem('rewardVariantProductHandle', res.product_handle);
+                }
+                if (res && res.variant_id) {
+                    return res.variant_id;
+                }
+                return null;
+            })
+            .fail(err => {
+                console.error('Failed to create/retrieve reward variant:', err);
+                return null;
+            });
     }
-
-
 
     // ── Cart Watcher ──────────────────────────────────────
     function watchCartChanges() {
@@ -580,6 +666,7 @@ const radioSelectors = 'label,input[type="radio"]';
         }
     }
     function removeRewardLineItemFromDOM(variantId) {
+        const { lineItemSelectors } = rewardBarShopCompatibilityHelper.getSettings(shop, Shopify.theme?.id);
         $('a').each(function () {
             const href = $(this).attr('href') || '';
             if (href.includes(variantId)) {
@@ -588,7 +675,11 @@ const radioSelectors = 'label,input[type="radio"]';
             }
         });
     }
+
     function lockRewardQuantityControls(variantId) {
+        const { lineItemSelectors, quantityButtonSelectors } =
+            rewardBarShopCompatibilityHelper.getSettings(shop, Shopify.theme?.id);
+
         $('a').each(function () {
             const href = $(this).attr('href') || '';
             if (href.includes(variantId)) {
@@ -599,14 +690,23 @@ const radioSelectors = 'label,input[type="radio"]';
     }
 
     function removeFreeRadioVariant() {
+        const { radioSelectors } = rewardBarShopCompatibilityHelper.getSettings(shop, Shopify.theme?.id);
         const searchTerm = '- free';
-        $('body').children().not('.progressbar-products').find('*').each(function () {
+        $('select').each(function () {
+            const $select = $(this);
+            $select.find('option').each(function () {
+                const text = $(this).text().trim().toLowerCase();
+                if (text.includes(searchTerm)) {
+                    $(this).remove();
+                }
+            });
+        });
+        $(radioSelectors).each(function () {
             const text = $(this).text().trim().toLowerCase();
             if (text.includes(searchTerm)) {
-                $(this).closest(radioSelectors).remove();
+                $(this).remove();
             }
         });
-
     }
 
     function injectClaimGiftCTA(rewardVariantId) {

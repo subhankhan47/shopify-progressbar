@@ -7,14 +7,13 @@ application_url = "https://sf-rewardbar.sfaddons.com/"
 embedded = true
 
 [build]
-include_config_on_deploy = false
 
 [webhooks]
 api_version = "2025-07"
 
   [[webhooks.subscriptions]]
-  uri = "/webhook/shop-redact"
-  compliance_topics = [ "shop/redact" ]
+  compliance_topics = ["customers/data_request", "customers/redact", "shop/redact"]
+  uri = "https://sf-rewardbar.sfaddons.com/webhooks"
 
 [auth]
 redirect_urls = [ "https://sf-rewardbar.sfaddons.com/authenticate" ]

@@ -17,7 +17,7 @@
 .horizontal-drawer .progress-bar-wrapper,
 .vertical-drawer .progress-bar-wrapper{
     width: 100%;
-    background-color: #e0e0e0;
+    background-color: #ffffff;
     height: 10px;
     border-radius: var(--pb-border-radius, 6px);
     overflow: hidden;
